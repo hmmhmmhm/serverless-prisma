@@ -1,0 +1,60 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    https://docs.serverless.com
+#    https://serverless.com/framework/docs/providers/aws/guide/serverless.yml
+#
+# Happy Coding!
+
+service: serverless-alpha
+useDotenv: true
+configValidationMode: error
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: ap-northeast-2
+  lambdaHashingVersion: 20201221
+
+functions:
+  serverlessAlpha:
+    handler: handler.serverlessAlpha
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-apigw-binary
+  - serverless-dotenv-plugin
+
+package:
+  patterns:
+  # Prisma Files
+    - '!node_modules/.prisma/client/query-engine-*'
+    - '!node_modules/.prisma/client/libquery_engine-*'
+    - 'node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node'
+    - 'node_modules/.prisma/client/query-engine-rhel-openssl-1.0.x'
+    - '!node_modules/prisma/*'
+    - '!node_modules/@prisma/engines/*'
+  # Project Files
+    - 'handler.ts'
+    - 'index.js'
+    - 'dist/*'
+
+custom:
+  apigwBinary:
+    types:
+      - '*/*'
+  includeDependencies:
+    always:
+      - 'src/lib/**'
